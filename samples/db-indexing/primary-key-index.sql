@@ -27,14 +27,14 @@ SELECT * FROM index_demo;
  * possible_keys: represents what all available indices are there which can be used in this query. 
  * key column represents which index is actually going to be used out of all possible indices in this query.
  */
-EXPLAIN SELECT * FROM index_demo WHERE phone_no = '5546677889';;
+EXPLAIN SELECT * FROM index_demo WHERE phone_no = '5546677889';
 
 
 /*
  * As of now we haven't defined a primary key, however InnoDB implicitly creates one for us by design,
  * once you create a primary key later on for that table, InnoDB deletes the previously auto defined 
  * primary key.
- * Here we see that MySQL has defined a composite index on DB_ROW_ID , DB_TRX_ID, DB_ROLL_PTR, name, age, pan_no and phone_no. 
+ * Here we see that MySQL has defined a composite index on DB_ROW_ID, DB_TRX_ID, DB_ROLL_PTR, name, age, pan_no and phone_no.
  * In the absence of a user defined primary key.
  */
 SHOW EXTENDED INDEX from index_demo;
@@ -61,6 +61,21 @@ SHOW INDEXES FROM index_demo;
  * So it essentially means that using the primary index named as PRIMARY (the name is auto assigned when you create the primary key), 
  * the query optimizer just goes directly to the record & fetches it.
  */
-EXPLAIN SELECT * FROM index_demo WHERE phone_no = '5546677889';
+EXPLAIN format=json SELECT * FROM index_demo WHERE phone_no = '5546677889';
+EXPLAIN format=json SELECT * FROM index_demo WHERE pan_no = '32546576' and phone_no = '5546677889';
+
+/*
+ * When we're in the need for another index, usually by detecting
+ * that another query is being used many times e.g using the name column,
+ * we may need to add another index for this column. This will be a secondary index.
+ */
+CREATE INDEX secondary_idx_1 ON index_demo (name);
+SHOW INDEXES FROM index_demo;
+
+/*
+ * Resources:
+ * https://www.freecodecamp.org/news/database-indexing-at-a-glance-bb50809d48bd/
+ * https://logicalread.com/mysql-index-cardinality-mc12/#.Y-VyIOxBxRI
+ */
 
 
